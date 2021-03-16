@@ -4,11 +4,11 @@
 #include "hybrid_a_star.h"
 
 // Initializes HBF
-HBF::HBF() {}
+ASTAR::ASTAR() {}
 
-HBF::~HBF() {}
+ASTAR::~ASTAR() {}
 
-int HBF::theta_to_stack_number(double theta){
+int ASTAR::theta_to_stack_number(double theta){
   // Takes an angle (in radians) and returns which "stack" in the 3D
   //   configuration space this angle corresponds to. Angles near 0 go in the
   //   lower stacks while angles near 2 * pi go in the higher stacks.
@@ -19,7 +19,7 @@ int HBF::theta_to_stack_number(double theta){
   return stack_number;
 }
 
-int HBF::idx(double float_num) {
+int ASTAR::idx(double float_num) {
   // Returns the index into the grid for continuous position. So if x is 3.621,
   //   then this would return 3 to indicate that 3.621 corresponds to array
   //   index 3.
@@ -27,14 +27,14 @@ int HBF::idx(double float_num) {
 }
 
 
-vector<HBF::maze_s> HBF::expand(HBF::maze_s &state) {
+vector<ASTAR::maze_s> ASTAR::expand(ASTAR::maze_s &state) {
   int g = state.g;
   double x = state.x;
   double y = state.y;
   double theta = state.theta;
 
   int g2 = g+1;
-  vector<HBF::maze_s> next_states;
+  vector<ASTAR::maze_s> next_states;
 
   for(double delta_i = -35; delta_i < 40; delta_i+=5) {
     double delta = M_PI / 180.0 * delta_i;
@@ -45,7 +45,7 @@ vector<HBF::maze_s> HBF::expand(HBF::maze_s &state) {
     }
     double x2 = x + SPEED * cos(theta);
     double y2 = y + SPEED * sin(theta);
-    HBF::maze_s state2;
+    ASTAR::maze_s state2;
     state2.g = g2;
     state2.x = x2;
     state2.y = y2;
@@ -56,9 +56,9 @@ vector<HBF::maze_s> HBF::expand(HBF::maze_s &state) {
   return next_states;
 }
 
-vector< HBF::maze_s> HBF::reconstruct_path(
-  vector<vector<vector<HBF::maze_s>>> &came_from, vector<double> &start,
-  HBF::maze_s &final) {
+vector< ASTAR::maze_s> ASTAR::reconstruct_path(
+  vector<vector<vector<ASTAR::maze_s>>> &came_from, vector<double> &start,
+  ASTAR::maze_s &final) {
 
   vector<maze_s> path = {final};
 
@@ -82,7 +82,7 @@ vector< HBF::maze_s> HBF::reconstruct_path(
   return path;
 }
 
-HBF::maze_path HBF::search(vector< vector<int> > &grid, vector<double> &start,
+ASTAR::maze_path ASTAR::search(vector< vector<int> > &grid, vector<double> &start,
                            vector<int> &goal) {
   // Working Implementation of breadth first search. Does NOT use a heuristic
   //   and as a result this is pretty inefficient. Try modifying this algorithm
@@ -153,7 +153,7 @@ HBF::maze_path HBF::search(vector< vector<int> > &grid, vector<double> &start,
   }
 
   std::cout << "no valid path." << std::endl;
-  HBF::maze_path path;
+  ASTAR::maze_path path;
   path.came_from = came_from;
   path.closed = closed;
   path.final = state;
