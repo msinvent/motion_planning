@@ -15,7 +15,8 @@ class ASTAR {
 
   // HBF structs
   struct maze_s {
-    int g;  // iteration
+    int g;  // cost to reach from start g(0) = g(-1) + 1
+    double f;  // number maintain priority queue (g + h(x,y))
     double x;
     double y;
     double theta;
@@ -32,7 +33,9 @@ class ASTAR {
 
   int idx(double float_num);
 
-  vector<maze_s> expand(maze_s &state);
+  double heuristic(ASTAR::maze_s &state, const std::vector<int>& goal) const;
+
+  vector<maze_s> expand(maze_s &state, const std::vector<int>& goal);
 
   vector<maze_s> reconstruct_path(vector<vector<vector<maze_s>>> &came_from,
                                   vector<double> &start, ASTAR::maze_s &final);

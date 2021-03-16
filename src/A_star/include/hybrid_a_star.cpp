@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include "hybrid_a_star.h"
+#include <queue>
 
 // Initializes HBF
 ASTAR::ASTAR() {}
@@ -26,8 +27,11 @@ int ASTAR::idx(double float_num) {
   return int(floor(float_num));
 }
 
+double ASTAR::heuristic(ASTAR::maze_s &state, const std::vector<int>& goal) const{
+  return 0.0;
+}
 
-vector<ASTAR::maze_s> ASTAR::expand(ASTAR::maze_s &state) {
+vector<ASTAR::maze_s> ASTAR::expand(ASTAR::maze_s &state, const std::vector<int>& goal) {
   int g = state.g;
   double x = state.x;
   double y = state.y;
@@ -50,6 +54,7 @@ vector<ASTAR::maze_s> ASTAR::expand(ASTAR::maze_s &state) {
     state2.x = x2;
     state2.y = y2;
     state2.theta = theta2;
+    state2.f = g2 + heuristic(state2, goal);
     next_states.push_back(state2);
   }
 
@@ -128,7 +133,7 @@ ASTAR::maze_path ASTAR::search(vector< vector<int> > &grid, vector<double> &star
       return path;
     }
 
-    vector<maze_s> next_state = expand(current);
+    vector<maze_s> next_state = expand(current, goal);
 
     for(int i = 0; i < next_state.size(); ++i) {
       int g2 = next_state[i].g;
