@@ -20,6 +20,9 @@ class ASTAR {
     double x;
     double y;
     double theta;
+    bool operator>(const maze_s& rhs) const{
+      return this->f < rhs.f;
+    }
   };
 
   struct maze_path {

@@ -59,18 +59,18 @@ int main() {
                                                        START, get_path.final);
 
   
-  std::cout << "show path from start to finish" << "\n";
-  for(int i = show_path.size()-1; i >= 0; --i) {
-      ASTAR::maze_s step = show_path[i];
+  // std::cout << "show path from start to finish" << "\n";
+  // for(int i = show_path.size()-1; i >= 0; --i) {
+  //     ASTAR::maze_s step = show_path[i];
       
-      std::cout << "##### step " << step.g << " #####" << "\n";
+  //     std::cout << "##### step " << step.g << " #####" << "\n";
       
-      std::cout << "x " << step.x << "\n";
+  //     std::cout << "x " << step.x << "\n";
       
-      std::cout << "y " << step.y << "\n";
+  //     std::cout << "y " << step.y << "\n";
       
-      std::cout << "theta " << step.theta << "\n";
-  }
+  //     std::cout << "theta " << step.theta << "\n";
+  // }
 
   return 0;
 }

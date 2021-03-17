@@ -28,7 +28,7 @@ int ASTAR::idx(double float_num) {
 }
 
 double ASTAR::heuristic(ASTAR::maze_s &state, const std::vector<int>& goal) const{
-  return 0.0;
+  return std::abs(state.x-goal[0])*std::abs(state.x-goal[0]) + std::abs(state.y-goal[1]);
 }
 
 vector<ASTAR::maze_s> ASTAR::expand(ASTAR::maze_s &state, const std::vector<int>& goal) {
@@ -113,11 +113,14 @@ ASTAR::maze_path ASTAR::search(vector< vector<int> > &grid, vector<double> &star
   closed[stack][idx(state.x)][idx(state.y)] = 1;
   came_from[stack][idx(state.x)][idx(state.y)] = state;
   int total_closed = 1;
-  vector<maze_s> opened = {state};
+  // vector<maze_s> opened = {state};
+  std::priority_queue<maze_s, std::vector<maze_s>, std::greater<maze_s>> opened;
+  opened.push(state);
+
   bool finished = false;
   while(!opened.empty()) {
-    maze_s current = opened[0]; //grab first elment
-    opened.erase(opened.begin()); //pop first element
+    maze_s current = opened.top(); //grab first elment
+    opened.pop();
 
     int x = current.x;
     int y = current.y;
@@ -137,6 +140,7 @@ ASTAR::maze_path ASTAR::search(vector< vector<int> > &grid, vector<double> &star
 
     for(int i = 0; i < next_state.size(); ++i) {
       int g2 = next_state[i].g;
+      double f2 = next_state[i].f;
       double x2 = next_state[i].x;
       double y2 = next_state[i].y;
       double theta2 = next_state[i].theta;
@@ -149,7 +153,7 @@ ASTAR::maze_path ASTAR::search(vector< vector<int> > &grid, vector<double> &star
       int stack2 = theta_to_stack_number(theta2);
 
       if(closed[stack2][idx(x2)][idx(y2)] == 0 && grid[idx(x2)][idx(y2)] == 0) {
-        opened.push_back(next_state[i]);
+        opened.push(next_state[i]);
         closed[stack2][idx(x2)][idx(y2)] = 1;
         came_from[stack2][idx(x2)][idx(y2)] = current;
         ++total_closed;
