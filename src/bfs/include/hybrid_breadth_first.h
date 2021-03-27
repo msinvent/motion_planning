@@ -42,7 +42,7 @@ class HBF {
 
  private:
   const int NUM_THETA_CELLS = 90;
-  const double SPEED = 1.45;
+  const double SPEED = 1.00;
   const double LENGTH = 0.5;
 };
 

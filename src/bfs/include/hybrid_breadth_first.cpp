@@ -2,6 +2,8 @@
 #include <iostream>
 #include <vector>
 #include "hybrid_breadth_first.h"
+#include <fstream>
+
 
 // Initializes HBF
 HBF::HBF() {}
@@ -84,6 +86,8 @@ vector< HBF::maze_s> HBF::reconstruct_path(
 
 HBF::maze_path HBF::search(vector< vector<int> > &grid, vector<double> &start,
                            vector<int> &goal) {
+
+  std::ofstream mycout("bfssearch.txt");
   // Working Implementation of breadth first search. Does NOT use a heuristic
   //   and as a result this is pretty inefficient. Try modifying this algorithm
   //   into hybrid A* by adding heuristics appropriately.
@@ -109,6 +113,12 @@ HBF::maze_path HBF::search(vector< vector<int> > &grid, vector<double> &start,
   came_from[stack][idx(state.x)][idx(state.y)] = state;
   int total_closed = 1;
   vector<maze_s> opened = {state};
+  static bool printOnce{true};
+  if(printOnce){
+    mycout<<"X"<<","<<"Y"<<","<<"theta"<<","<<"g"<<"\n";
+    printOnce = false;
+  }
+  mycout<<state.x<<","<<state.y<<","<<state.theta<<","<<state.g<<"\n";
   bool finished = false;
   while(!opened.empty()) {
     maze_s current = opened[0]; //grab first elment
@@ -130,7 +140,7 @@ HBF::maze_path HBF::search(vector< vector<int> > &grid, vector<double> &start,
 
     vector<maze_s> next_state = expand(current);
 
-    for(int i = 0; i < next_state.size(); ++i) {
+    for(int i = 0u; i < next_state.size(); ++i) {
       int g2 = next_state[i].g;
       double x2 = next_state[i].x;
       double y2 = next_state[i].y;
@@ -145,6 +155,7 @@ HBF::maze_path HBF::search(vector< vector<int> > &grid, vector<double> &start,
 
       if(closed[stack2][idx(x2)][idx(y2)] == 0 && grid[idx(x2)][idx(y2)] == 0) {
         opened.push_back(next_state[i]);
+        mycout<<next_state[i].x<<","<<next_state[i].y<<","<<next_state[i].theta<<","<<next_state[i].g<<"\n";
         closed[stack2][idx(x2)][idx(y2)] = 1;
         came_from[stack2][idx(x2)][idx(y2)] = current;
         ++total_closed;

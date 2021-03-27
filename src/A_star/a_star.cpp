@@ -31,6 +31,7 @@ vector<vector<int>> GRID = {
   {X,X,X,_,_,_,_,_,_,_,_,_,_,_,_,_,}};
 
 vector<double> START = {0.0,0.0,0.0};
+// vector<double> START = {0.0,0.0,3.1416/4.0};
 vector<int> GOAL = {(int)GRID.size()-1, (int)GRID[0].size()-1};
 
 int main() {
@@ -59,18 +60,21 @@ int main() {
                                                        START, get_path.final);
 
   
+  std::ofstream mycout("astarfinalpath.txt");
+  mycout<<"X,Y,theta\n";
   // std::cout << "show path from start to finish" << "\n";
-  // for(int i = show_path.size()-1; i >= 0; --i) {
-  //     ASTAR::maze_s step = show_path[i];
+  for(int i = show_path.size()-1; i >= 0; --i) {
+      ASTAR::maze_s step = show_path[i];
       
-  //     std::cout << "##### step " << step.g << " #####" << "\n";
+      // std::cout << "##### step " << step.g << " #####" << "\n";
       
-  //     std::cout << "x " << step.x << "\n";
+      // std::cout << "x " << step.x << "\n";
       
-  //     std::cout << "y " << step.y << "\n";
+      // std::cout << "y " << step.y << "\n";
       
-  //     std::cout << "theta " << step.theta << "\n";
-  // }
+      // std::cout << "theta " << step.theta << "\n";
+      mycout<<step.x<<","<<step.y<<","<<step.theta<<"\n";
+  }
 
   return 0;
 }

@@ -3,6 +3,8 @@
 #include <vector>
 #include "hybrid_a_star.h"
 #include <queue>
+#include <fstream>
+
 
 // Initializes HBF
 ASTAR::ASTAR() {}
@@ -28,7 +30,12 @@ int ASTAR::idx(double float_num) {
 }
 
 double ASTAR::heuristic(ASTAR::maze_s &state, const std::vector<int>& goal) const{
-  return std::abs(state.x-goal[0])*std::abs(state.x-goal[0]) + std::abs(state.y-goal[1]);
+  return (state.x-goal[0])*(state.x-goal[0]) + (state.y-goal[1])*(state.y-goal[1]);
+}
+
+double ASTAR::heuristic(ASTAR::maze_s &state1, ASTAR::maze_s &state2) const{
+  return (state1.x-state2.x)*(state1.x-state2.x) + (state1.y-state2.y)*(state1.y-state2.y);
+  // return 0.0;
 }
 
 vector<ASTAR::maze_s> ASTAR::expand(ASTAR::maze_s &state, const std::vector<int>& goal) {
@@ -40,23 +47,29 @@ vector<ASTAR::maze_s> ASTAR::expand(ASTAR::maze_s &state, const std::vector<int>
   int g2 = g+1;
   vector<ASTAR::maze_s> next_states;
 
-  for(double delta_i = -35; delta_i < 40; delta_i+=5) {
+  for(double delta_i = minSteering; delta_i < maxSteering; delta_i+=steeringResolution) {
     double delta = M_PI / 180.0 * delta_i;
     double omega = SPEED / LENGTH * tan(delta);
     double theta2 = theta + omega;
+
     if(theta2 < 0) {
       theta2 += 2*M_PI;
     }
-    double x2 = x + SPEED * cos(theta);
-    double y2 = y + SPEED * sin(theta);
+    double x2 = x + SPEED * cos(theta2);
+    double y2 = y + SPEED * sin(theta2);
+    
     ASTAR::maze_s state2;
-    state2.g = g2;
     state2.x = x2;
     state2.y = y2;
     state2.theta = theta2;
-    state2.f = g2 + heuristic(state2, goal);
+    // state2.g = g + heuristic(state, state2);
+    state2.g = g + 1;
+    // state2.f = g2 + heuristic(state2, goal) - 1.0*abs(delta_i); // zig-zag path
+    state2.f = state2.g + heuristic(state2, goal) + weight_direction*abs(delta_i);
     next_states.push_back(state2);
   }
+
+  std::cout<<"Expanded "<<next_states.size()<<" elements\n";
 
   return next_states;
 }
@@ -89,6 +102,9 @@ vector< ASTAR::maze_s> ASTAR::reconstruct_path(
 
 ASTAR::maze_path ASTAR::search(vector< vector<int> > &grid, vector<double> &start,
                            vector<int> &goal) {
+
+  std::ofstream mycout("astarsearch.txt");
+
   // Working Implementation of breadth first search. Does NOT use a heuristic
   //   and as a result this is pretty inefficient. Try modifying this algorithm
   //   into hybrid A* by adding heuristics appropriately.
@@ -106,6 +122,7 @@ ASTAR::maze_path ASTAR::search(vector< vector<int> > &grid, vector<double> &star
 
   maze_s state;
   state.g = g;
+  state.f = g;
   state.x = start[0];
   state.y = start[1];
   state.theta = theta;
@@ -116,6 +133,14 @@ ASTAR::maze_path ASTAR::search(vector< vector<int> > &grid, vector<double> &star
   // vector<maze_s> opened = {state};
   std::priority_queue<maze_s, std::vector<maze_s>, std::greater<maze_s>> opened;
   opened.push(state);
+
+
+  static bool printOnce{true};
+  if(printOnce){
+    mycout<<"X"<<","<<"Y"<<","<<"theta"<<","<<"g"<<","<<"f"<<"\n";
+    printOnce = false;
+  }
+  mycout<<state.x<<","<<state.y<<","<<state.theta<<","<<state.g<<","<<state.f<<"\n";
 
   bool finished = false;
   while(!opened.empty()) {
@@ -154,6 +179,8 @@ ASTAR::maze_path ASTAR::search(vector< vector<int> > &grid, vector<double> &star
 
       if(closed[stack2][idx(x2)][idx(y2)] == 0 && grid[idx(x2)][idx(y2)] == 0) {
         opened.push(next_state[i]);
+        mycout<<next_state[i].x<<","<<next_state[i].y<<","<<next_state[i].theta<<","
+        <<next_state[i].g<<","<<next_state[i].f<<"\n";
         closed[stack2][idx(x2)][idx(y2)] = 1;
         came_from[stack2][idx(x2)][idx(y2)] = current;
         ++total_closed;

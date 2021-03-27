@@ -21,7 +21,7 @@ class ASTAR {
     double y;
     double theta;
     bool operator>(const maze_s& rhs) const{
-      return this->f < rhs.f;
+      return this->f > rhs.f;
     }
   };
 
@@ -36,7 +36,8 @@ class ASTAR {
 
   int idx(double float_num);
 
-  double heuristic(ASTAR::maze_s &state, const std::vector<int>& goal) const;
+  double heuristic(maze_s &state, const std::vector<int>& goal) const;
+  double heuristic(maze_s &state1, maze_s &state2) const;
 
   vector<maze_s> expand(maze_s &state, const std::vector<int>& goal);
 
@@ -47,9 +48,13 @@ class ASTAR {
                    vector<int> &goal);
 
  private:
-  const int NUM_THETA_CELLS = 90;
-  const double SPEED = 1.45;
+  const int NUM_THETA_CELLS = 180;
+  const double SPEED = 0.8;
   const double LENGTH = 0.5;
+  const double maxSteering = 15.0;
+  const double minSteering = -15.0;
+  const double steeringResolution = 1.0;
+  const double weight_direction = 10.0;
 };
 
 #endif  // HYBRID_A_STAR_H_
